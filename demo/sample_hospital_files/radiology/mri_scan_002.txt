@@ -1,0 +1,1 @@
+MRI Report | Patient ID: 002 | Sequence: T2 | Findings: Normal brain morphology

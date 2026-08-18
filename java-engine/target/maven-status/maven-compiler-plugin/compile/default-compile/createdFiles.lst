@@ -1,0 +1,13 @@
+com\ransomshield\detection\AnomalyDetector.class
+com\ransomshield\detection\CanaryFileManager.class
+com\ransomshield\model\AlertPayload$FreezeResult.class
+com\ransomshield\detection\EntropyAnalyzer.class
+com\ransomshield\api\AlertPublisher.class
+com\ransomshield\model\AlertPayload.class
+com\ransomshield\api\ControlServer.class
+com\ransomshield\monitor\FileActivityBaseline.class
+com\ransomshield\monitor\FileWatcher.class
+com\ransomshield\process\ProcessKillChainTracer.class
+com\ransomshield\detection\AnomalyDetector$Analysis.class
+com\ransomshield\Main.class
+com\ransomshield\model\AlertPayload$PidInfo.class

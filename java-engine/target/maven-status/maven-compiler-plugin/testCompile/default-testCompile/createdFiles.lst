@@ -1,0 +1,4 @@
+com\ransomshield\process\CmdlineProbe.class
+com\ransomshield\detection\DetectionTest.class
+com\ransomshield\api\PublishProbe.class
+com\ransomshield\process\TracerProbe.class

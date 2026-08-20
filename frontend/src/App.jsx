@@ -4,8 +4,8 @@ import { unlockAudio, playAlarm, playCorruptionTick, playDetectionStinger, playR
 import { dummyPatients } from "./data/dummyPatients";
 import { initialDemoNetwork, createDemoCampaign } from "./data/dummyNetwork";
 
-const WS_URL = "ws://localhost:8000/ws";
-const API_URL = "http://localhost:8000";
+const WS_URL = process.env.REACT_APP_WS_URL || "ws://localhost:8000/ws";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 export default function App() {
   const [connected, setConnected] = useState(false);

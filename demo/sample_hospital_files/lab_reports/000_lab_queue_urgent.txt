@@ -1,0 +1,5 @@
+URGENT — INTER-DEPARTMENT HANDOVER (CONFIDENTIAL)
+Patient cohort: post-op ICU transfers, ward 4B.
+Attending: Dr. S. Mehta. Notes pending sign-off.
+vault_key: 7f3a9c2e1d8b4a6f0e5d3c2b1a9f8e7d
+This file is an automated decoy placed by RansomShield.

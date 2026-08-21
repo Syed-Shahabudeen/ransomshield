@@ -138,7 +138,7 @@ export default function NetworkMap({ network, onRefresh, onCampaignStart, onCamp
     try {
       const ctx = getAudioContext();
       if (!ctx) return; // audio unavailable — stay silent, never crash
-      if (ctx.state === "suspended") ctx.resume().catch(() => {});
+      if (ctx.state === "suspended") ctx.resume().catch(() => { });
       const t = ctx.currentTime;
       // low impact thump
       const thump = ctx.createOscillator();
@@ -319,10 +319,10 @@ export default function NetworkMap({ network, onRefresh, onCampaignStart, onCamp
   const curWaveData = curWave >= 0 ? waves[curWave] : null;
   const displayNodes = model
     ? nodes.map((n) => ({
-        ...n,
-        status: model.status[n.id] || "protected",
-        intel_count: model.armed && n.intel_count === 0 ? 1 : n.intel_count,
-      }))
+      ...n,
+      status: model.status[n.id] || "protected",
+      intel_count: model.armed && n.intel_count === 0 ? 1 : n.intel_count,
+    }))
     : nodes;
   const displayById = Object.fromEntries(displayNodes.map((n) => [n.id, n]));
   const hoveredNode = hovered ? displayById[hovered] : null;
@@ -377,209 +377,209 @@ export default function NetworkMap({ network, onRefresh, onCampaignStart, onCamp
             `density-reduced` slows edges and stops pings/reticle spins. */}
         <div className={(shaking ? "map-shake" : "") + (impactFx && animDensity !== "off" ? "" : " fx-off") + (animDensity === "reduced" ? " density-reduced" : "")}
           style={{ borderRadius: 10, position: "relative" }}>
-        <ComposableMap projection={proj} width={W} height={H} style={{ width: "100%", height: "auto", background: "rgba(2,6,14,0.5)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.05)" }}>
-          <Geographies geography={indiaTopoJson}>
-            {({ geographies }) =>
-              geographies.map((geo) => (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  fill="rgba(14,165,233,0.03)"
-                  stroke="rgba(14,165,233,0.25)"
-                  strokeWidth={1.2}
-                  style={{
-                    default: { outline: "none" },
-                    hover: { outline: "none" },
-                    pressed: { outline: "none" },
-                  }}
-                />
-              ))
-            }
-          </Geographies>
-          {/* subtle graticule */}
-          {[0.2, 0.4, 0.6, 0.8].map((f) => (
-            <g key={f}>
-              <line x1={W * f} y1={0} x2={W * f} y2={H} stroke="rgba(255,255,255,0.02)" />
-              <line x1={0} y1={H * f} x2={W} y2={H * f} stroke="rgba(255,255,255,0.02)" />
-            </g>
-          ))}
+          <ComposableMap projection={proj} width={W} height={H} style={{ width: "100%", height: "auto", background: "rgba(2,6,14,0.5)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.05)" }}>
+            <Geographies geography={indiaTopoJson}>
+              {({ geographies }) =>
+                geographies.map((geo) => (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill="rgba(14,165,233,0.03)"
+                    stroke="rgba(14,165,233,0.25)"
+                    strokeWidth={1.2}
+                    style={{
+                      default: { outline: "none" },
+                      hover: { outline: "none" },
+                      pressed: { outline: "none" },
+                    }}
+                  />
+                ))
+              }
+            </Geographies>
+            {/* subtle graticule */}
+            {[0.2, 0.4, 0.6, 0.8].map((f) => (
+              <g key={f}>
+                <line x1={W * f} y1={0} x2={W * f} y2={H} stroke="rgba(255,255,255,0.02)" />
+                <line x1={0} y1={H * f} x2={W} y2={H * f} stroke="rgba(255,255,255,0.02)" />
+              </g>
+            ))}
 
-          {/* Region labels */}
-          {Object.entries(REGION_POS).map(([region, [px, lat]]) => {
-            const y = P([lat, 80])[1];
-            return (
-              <text key={region} x={px} y={y} textAnchor="middle"
-                style={{ fontSize: 9, letterSpacing: "0.18em", fill: "rgba(100,116,139,0.5)", fontFamily: "'JetBrains Mono', monospace" }}>
-                {region.toUpperCase()}
-              </text>
-            );
-          })}
+            {/* Region labels */}
+            {Object.entries(REGION_POS).map(([region, [px, lat]]) => {
+              const y = P([lat, 80])[1];
+              return (
+                <text key={region} x={px} y={y} textAnchor="middle"
+                  style={{ fontSize: 9, letterSpacing: "0.18em", fill: "rgba(100,116,139,0.5)", fontFamily: "'JetBrains Mono', monospace" }}>
+                  {region.toUpperCase()}
+                </text>
+              );
+            })}
 
-          {/* Region-target sweep — lock-on before a scheduled campaign act hits.
+            {/* Region-target sweep — lock-on before a scheduled campaign act hits.
               Always rendered while in its window; `sweepClock` freezes the
               scan line when FX or density disables motion. */}
-          {sweeps.map(({ actIndex, regions, boxes, p }) => {
-            const eased = 1 - Math.pow(1 - p, 2);
-            return boxes.map((b, bi) => {
-              const scanY = b.y + eased * b.h;
-              return (
-                <g key={`sweep-${actIndex}-${bi}`} data-sweep={regions.join("+")}>
-                  <defs>
-                    <linearGradient id={`sweepGrad-${actIndex}-${bi}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="rgba(239,68,68,0)" />
-                      <stop offset="100%" stopColor="rgba(239,68,68,0.28)" />
-                    </linearGradient>
-                  </defs>
-                  <rect x={b.x} y={b.y} width={b.w} height={b.h} rx={14}
-                    fill="rgba(239,68,68,0.05)" stroke="rgba(239,68,68,0.55)"
-                    strokeWidth={1.1} strokeDasharray="5 5"
-                    opacity={0.25 + 0.75 * eased} />
-                  <rect x={b.x} y={scanY - 30} width={b.w} height={30}
-                    fill={`url(#sweepGrad-${actIndex}-${bi})`} opacity={eased} />
-                  <line x1={b.x} y1={scanY} x2={b.x + b.w} y2={scanY}
-                    stroke="#EF4444" strokeWidth={1.5}
-                    opacity={0.3 + 0.7 * eased}
-                    style={{ filter: "drop-shadow(0 0 4px rgba(239,68,68,0.9))" }} />
-                </g>
-              );
-            });
-          })}
-          {sweeps.map(({ actIndex, regions, p }) => regions.map((r) => {
-            const [px, lat] = REGION_POS[r];
-            const y = P([lat, 80])[1];
-            return (
-              <text key={`sweep-label-${actIndex}-${r}`} x={px} y={y} textAnchor="middle"
-                style={{ fontSize: 9, letterSpacing: "0.18em", fill: "#FCA5A5", fontFamily: "'JetBrains Mono', monospace", fontWeight: 800 }}
-                opacity={0.35 + 0.65 * p}>
-                {r.toUpperCase()} ▸
-              </text>
-            );
-          }))}
-
-          {/* Broadcast spread edges — live (recent fingerprint) or replay (current wave) */}
-          {(() => {
-            const edges = replayOn && hasReplay && src
-              ? (curWaveData?.targets || []).map((tid) => ({ tid, t: displayById[tid] }))
-              : showEdges && src
-                ? (latest.targets || []).map((tid) => ({ tid, t: byId[tid] }))
-                : [];
-            return edges.filter(({ t }) => t).map(({ tid, t }) => {
-              const [sx, sy] = P([src.lat, src.lon]);
-              const [tx, ty] = P([t.lat, t.lon]);
-              const color = STATUS_COLOR[t.status] || "#F97316";
-              return (
-                <g key={tid}>
-                  <line x1={sx} y1={sy} x2={tx} y2={ty}
-                    stroke={color} strokeWidth={1}
-                    strokeDasharray="3 4" opacity={0.55} className="net-edge" />
-                  <circle cx={tx} cy={ty} r={9} fill="none"
-                    stroke={color} strokeWidth={0.7} opacity={0.5} className="net-ping" />
-                </g>
-              );
-            });
-          })()}
-
-          {/* Nodes */}
-          {displayNodes.map((n) => {
-            const r = 3.5 + Math.min(n.beds / 500, 6);
-            const color = STATUS_COLOR[n.status] || "#22C55E";
-            const armed = n.intel_count > 0 && n.status === "protected";
-            return (
-              <Marker key={n.id} coordinates={[n.lon, n.lat]}
-                onMouseEnter={() => setHovered(n.id)}
-                onMouseLeave={() => setHovered(null)}
-                onClick={() => setSelected(n.id === selected ? null : n.id)}
-                style={{ cursor: "pointer", default: { outline: "none" }, hover: { outline: "none" }, pressed: { outline: "none" } }}>
-                {n.monitored && (
-                  <circle cx={0} cy={0} r={r + 6} fill="none" stroke="#F1F5F9"
-                    strokeWidth={1.4} className="net-ping" />
-                )}
-                {(n.status === "attacked" || n.monitored) && (
-                  <circle cx={0} cy={0} r={r + 3} fill="none" stroke={color}
-                    strokeWidth={1} opacity={0.7} className="net-ping" />
-                )}
-                {armed && (
-                  <circle cx={0} cy={0} r={r + 2.5} fill="none" stroke="#0EA5E9"
-                    strokeWidth={0.8} opacity={0.6} />
-                )}
-                <circle cx={0} cy={0} r={r}
-                  fill={color} fillOpacity={n.monitored ? 1 : 0.9}
-                  stroke={selected === n.id ? "#F8FAFC" : "rgba(255,255,255,0.35)"}
-                  strokeWidth={selected === n.id ? 1.6 : 0.8} />
-                {n.monitored && (
-                  <circle cx={0} cy={0} r={2} fill="#F1F5F9" />
-                )}
-                {(hovered === n.id || selected === n.id) && (
-                  <g>
-                    <rect x={-86} y={-44}
-                      width={172} height={34} rx={6} fill="rgba(2,6,14,0.94)"
-                      stroke="rgba(255,255,255,0.12)" />
-                    <text x={0} y={-30}
-                      textAnchor="middle" style={{ fontSize: 10, fill: "#E2E8F0", fontFamily: "'Syne', sans-serif", fontWeight: 700 }}>
-                      {n.name.length > 26 ? n.name.slice(0, 25) + "…" : n.name}
-                    </text>
-                    <text x={0} y={-17}
-                      textAnchor="middle" style={{ fontSize: 8.5, fill: color, fontFamily: "'JetBrains Mono', monospace" }}>
-                      {STATUS_LABEL[n.status]} · {n.city}, {n.state} · {n.beds} beds · Sec {n.security}
-                    </text>
+            {sweeps.map(({ actIndex, regions, boxes, p }) => {
+              const eased = 1 - Math.pow(1 - p, 2);
+              return boxes.map((b, bi) => {
+                const scanY = b.y + eased * b.h;
+                return (
+                  <g key={`sweep-${actIndex}-${bi}`} data-sweep={regions.join("+")}>
+                    <defs>
+                      <linearGradient id={`sweepGrad-${actIndex}-${bi}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="rgba(239,68,68,0)" />
+                        <stop offset="100%" stopColor="rgba(239,68,68,0.28)" />
+                      </linearGradient>
+                    </defs>
+                    <rect x={b.x} y={b.y} width={b.w} height={b.h} rx={14}
+                      fill="rgba(239,68,68,0.05)" stroke="rgba(239,68,68,0.55)"
+                      strokeWidth={1.1} strokeDasharray="5 5"
+                      opacity={0.25 + 0.75 * eased} />
+                    <rect x={b.x} y={scanY - 30} width={b.w} height={30}
+                      fill={`url(#sweepGrad-${actIndex}-${bi})`} opacity={eased} />
+                    <line x1={b.x} y1={scanY} x2={b.x + b.w} y2={scanY}
+                      stroke="#EF4444" strokeWidth={1.5}
+                      opacity={0.3 + 0.7 * eased}
+                      style={{ filter: "drop-shadow(0 0 4px rgba(239,68,68,0.9))" }} />
                   </g>
-                )}
-              </Marker>
-            );
-          })}
+                );
+              });
+            })}
+            {sweeps.map(({ actIndex, regions, p }) => regions.map((r) => {
+              const [px, lat] = REGION_POS[r];
+              const y = P([lat, 80])[1];
+              return (
+                <text key={`sweep-label-${actIndex}-${r}`} x={px} y={y} textAnchor="middle"
+                  style={{ fontSize: 9, letterSpacing: "0.18em", fill: "#FCA5A5", fontFamily: "'JetBrains Mono', monospace", fontWeight: 800 }}
+                  opacity={0.35 + 0.65 * p}>
+                  {r.toUpperCase()} ▸
+                </text>
+              );
+            }))}
 
-          {/* Reticle lock-on on exact targets in the final second before impact */}
-          {reticles.map(({ id, node, actIndex }) => {
-            const r = 3.5 + Math.min(node.beds / 500, 6);
-            return (
-              <Marker key={`reticle-${actIndex}-${id}`} coordinates={[node.lon, node.lat]} data-reticle={id}>
-                <circle cx={0} cy={0} r={r + 8} fill="none" stroke="#EF4444" strokeWidth={1.1}
-                  strokeDasharray="4 4" opacity={0.95} className="reticle-ring" />
-                <circle cx={0} cy={0} r={r + 14} fill="none" stroke="rgba(239,68,68,0.5)" strokeWidth={0.7}
-                  strokeDasharray="2 6" opacity={0.75} className="reticle-ring rev" />
-                {[[0, -1], [0, 1], [-1, 0], [1, 0]].map(([dx, dy], i) => (
-                  <line key={i} x1={dx * (r + 9)} y1={dy * (r + 9)}
-                    x2={dx * (r + 13)} y2={dy * (r + 13)}
-                    stroke="#EF4444" strokeWidth={1.1} opacity={0.95} />
-                ))}
-                <circle cx={0} cy={0} r={2} fill="#EF4444" opacity={0.95} />
-              </Marker>
-            );
-          })}
+            {/* Broadcast spread edges — live (recent fingerprint) or replay (current wave) */}
+            {(() => {
+              const edges = replayOn && hasReplay && src
+                ? (curWaveData?.targets || []).map((tid) => ({ tid, t: displayById[tid] }))
+                : showEdges && src
+                  ? (latest.targets || []).map((tid) => ({ tid, t: byId[tid] }))
+                  : [];
+              return edges.filter(({ t }) => t).map(({ tid, t }) => {
+                const [sx, sy] = P([src.lat, src.lon]);
+                const [tx, ty] = P([t.lat, t.lon]);
+                const color = STATUS_COLOR[t.status] || "#F97316";
+                return (
+                  <g key={tid}>
+                    <line x1={sx} y1={sy} x2={tx} y2={ty}
+                      stroke={color} strokeWidth={1}
+                      strokeDasharray="3 4" opacity={0.55} className="net-edge" />
+                    <circle cx={tx} cy={ty} r={9} fill="none"
+                      stroke={color} strokeWidth={0.7} opacity={0.5} className="net-ping" />
+                  </g>
+                );
+              });
+            })()}
 
-          {/* Selected node details (bottom-left legend card) */}
-          <g>
-            <rect x={8} y={H - 34} width={300} height={26} rx={6} fill="rgba(2,6,14,0.9)"
-              stroke="rgba(255,255,255,0.08)" />
-            <text x={16} y={H - 17} style={{ fontSize: 9.5, fill: "#64748B", fontFamily: "'JetBrains Mono', monospace" }}>
-              {selectedNode
-                ? `${selectedNode.name} · ${selectedNode.status.toUpperCase()} · intel ${selectedNode.intel_count} FP · tier ${selectedNode.tier}`
-                : "CLICK A NODE FOR DETAILS · DASHED LINES = ACTIVE CAMPAIGN SPREAD"}
-            </text>
-          </g>
-        </ComposableMap>
+            {/* Nodes */}
+            {displayNodes.map((n) => {
+              const r = 3.5 + Math.min(n.beds / 500, 6);
+              const color = STATUS_COLOR[n.status] || "#22C55E";
+              const armed = n.intel_count > 0 && n.status === "protected";
+              return (
+                <Marker key={n.id} coordinates={[n.lon, n.lat]}
+                  onMouseEnter={() => setHovered(n.id)}
+                  onMouseLeave={() => setHovered(null)}
+                  onClick={() => setSelected(n.id === selected ? null : n.id)}
+                  style={{ cursor: "pointer", default: { outline: "none" }, hover: { outline: "none" }, pressed: { outline: "none" } }}>
+                  {n.monitored && (
+                    <circle cx={0} cy={0} r={r + 6} fill="none" stroke="#F1F5F9"
+                      strokeWidth={1.4} className="net-ping" />
+                  )}
+                  {(n.status === "attacked" || n.monitored) && (
+                    <circle cx={0} cy={0} r={r + 3} fill="none" stroke={color}
+                      strokeWidth={1} opacity={0.7} className="net-ping" />
+                  )}
+                  {armed && (
+                    <circle cx={0} cy={0} r={r + 2.5} fill="none" stroke="#0EA5E9"
+                      strokeWidth={0.8} opacity={0.6} />
+                  )}
+                  <circle cx={0} cy={0} r={r}
+                    fill={color} fillOpacity={n.monitored ? 1 : 0.9}
+                    stroke={selected === n.id ? "#F8FAFC" : "rgba(255,255,255,0.35)"}
+                    strokeWidth={selected === n.id ? 1.6 : 0.8} />
+                  {n.monitored && (
+                    <circle cx={0} cy={0} r={2} fill="#F1F5F9" />
+                  )}
+                  {(hovered === n.id || selected === n.id) && (
+                    <g>
+                      <rect x={-86} y={-44}
+                        width={172} height={34} rx={6} fill="rgba(2,6,14,0.94)"
+                        stroke="rgba(255,255,255,0.12)" />
+                      <text x={0} y={-30}
+                        textAnchor="middle" style={{ fontSize: 10, fill: "#E2E8F0", fontFamily: "'Syne', sans-serif", fontWeight: 700 }}>
+                        {n.name.length > 26 ? n.name.slice(0, 25) + "…" : n.name}
+                      </text>
+                      <text x={0} y={-17}
+                        textAnchor="middle" style={{ fontSize: 8.5, fill: color, fontFamily: "'JetBrains Mono', monospace" }}>
+                        {STATUS_LABEL[n.status]} · {n.city}, {n.state} · {n.beds} beds · Sec {n.security}
+                      </text>
+                    </g>
+                  )}
+                </Marker>
+              );
+            })}
 
-        {/* Impact caption — hit hospitals, for judges watching without audio */}
-        {toast && (
-          <div key={toast.key} className="impact-toast" style={{
-            position: "absolute", top: 10, right: 10, zIndex: 5,
-            display: "flex", alignItems: "center", gap: 8,
-            padding: "8px 14px", borderRadius: 9,
-            background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.5)",
-            boxShadow: "0 4px 20px rgba(239,68,68,0.3)",
-            backdropFilter: "blur(4px)", pointerEvents: "none",
-          }}>
-            <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.12em", color: "#FCA5A5", fontFamily: "'JetBrains Mono', monospace" }}>
-              ⚡ IMPACT
-            </span>
-            <span style={{ fontSize: 11, fontWeight: 600, color: "#FECACA", fontFamily: "'JetBrains Mono', monospace" }}>
-              {(() => {
-                const names = toast.hits.map((h) => byId[h]?.name?.split(" (")[0] || h).filter(Boolean);
-                return names.length ? names.join(", ") : "targets contained — no hits";
-              })()}
-            </span>
-          </div>
-        )}
+            {/* Reticle lock-on on exact targets in the final second before impact */}
+            {reticles.map(({ id, node, actIndex }) => {
+              const r = 3.5 + Math.min(node.beds / 500, 6);
+              return (
+                <Marker key={`reticle-${actIndex}-${id}`} coordinates={[node.lon, node.lat]} data-reticle={id}>
+                  <circle cx={0} cy={0} r={r + 8} fill="none" stroke="#EF4444" strokeWidth={1.1}
+                    strokeDasharray="4 4" opacity={0.95} className="reticle-ring" />
+                  <circle cx={0} cy={0} r={r + 14} fill="none" stroke="rgba(239,68,68,0.5)" strokeWidth={0.7}
+                    strokeDasharray="2 6" opacity={0.75} className="reticle-ring rev" />
+                  {[[0, -1], [0, 1], [-1, 0], [1, 0]].map(([dx, dy], i) => (
+                    <line key={i} x1={dx * (r + 9)} y1={dy * (r + 9)}
+                      x2={dx * (r + 13)} y2={dy * (r + 13)}
+                      stroke="#EF4444" strokeWidth={1.1} opacity={0.95} />
+                  ))}
+                  <circle cx={0} cy={0} r={2} fill="#EF4444" opacity={0.95} />
+                </Marker>
+              );
+            })}
+
+            {/* Selected node details (bottom-left legend card) */}
+            <g>
+              <rect x={8} y={H - 34} width={300} height={26} rx={6} fill="rgba(2,6,14,0.9)"
+                stroke="rgba(255,255,255,0.08)" />
+              <text x={16} y={H - 17} style={{ fontSize: 9.5, fill: "#64748B", fontFamily: "'JetBrains Mono', monospace" }}>
+                {selectedNode
+                  ? `${selectedNode.name} · ${selectedNode.status.toUpperCase()} · intel ${selectedNode.intel_count} FP · tier ${selectedNode.tier}`
+                  : "CLICK A NODE FOR DETAILS · DASHED LINES = ACTIVE CAMPAIGN SPREAD"}
+              </text>
+            </g>
+          </ComposableMap>
+
+          {/* Impact caption — hit hospitals, for judges watching without audio */}
+          {toast && (
+            <div key={toast.key} className="impact-toast" style={{
+              position: "absolute", top: 10, right: 10, zIndex: 5,
+              display: "flex", alignItems: "center", gap: 8,
+              padding: "8px 14px", borderRadius: 9,
+              background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.5)",
+              boxShadow: "0 4px 20px rgba(239,68,68,0.3)",
+              backdropFilter: "blur(4px)", pointerEvents: "none",
+            }}>
+              <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.12em", color: "#FCA5A5", fontFamily: "'JetBrains Mono', monospace" }}>
+                ⚡ IMPACT
+              </span>
+              <span style={{ fontSize: 11, fontWeight: 600, color: "#FECACA", fontFamily: "'JetBrains Mono', monospace" }}>
+                {(() => {
+                  const names = toast.hits.map((h) => byId[h]?.name?.split(" (")[0] || h).filter(Boolean);
+                  return names.length ? names.join(", ") : "targets contained — no hits";
+                })()}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Legend */}
@@ -843,9 +843,9 @@ export default function NetworkMap({ network, onRefresh, onCampaignStart, onCamp
                     <span style={{
                       color: ev.kind === "fingerprint_broadcast" ? "#FDBA74"
                         : ev.kind === "quarantined" ? "#FCA5A5"
-                        : ev.kind === "blocked" ? "#86EFAC"
-                        : ev.kind === "probe" ? "#FDE68A"
-                        : "#7DD3FC",
+                          : ev.kind === "blocked" ? "#86EFAC"
+                            : ev.kind === "probe" ? "#FDE68A"
+                              : "#7DD3FC",
                       overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                     }}>
                       {ev.text}

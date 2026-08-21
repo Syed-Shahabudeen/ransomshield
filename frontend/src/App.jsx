@@ -329,6 +329,20 @@ export default function App() {
   }, [refreshNetwork]);
 
   const stopCampaign = useCallback(async () => {
+    // 1. Cancel frontend demo if running
+    demoTimersRef.current.forEach(clearTimeout);
+    demoTimersRef.current = [];
+    if (stopAlarmRef.current) {
+      stopAlarmRef.current();
+      stopAlarmRef.current = null;
+    }
+    setDemoState("protected");
+    setDemoPatients(dummyPatients);
+    setNetwork(initialDemoNetwork);
+    setForcedTab(null);
+    setFileChanges([]);
+
+    // 2. Try to stop live backend campaign if connected
     try {
       await fetch(`${API_URL}/network/campaign/stop`, { method: "POST" });
       refreshNetwork();

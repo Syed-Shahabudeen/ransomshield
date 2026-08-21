@@ -50,21 +50,21 @@ export const createDemoCampaign = () => {
         index: 0,
         at: 2,
         targets: ["west"],
-        hits: ["HOSP-004", "HOSP-007"],
+        hits: ["kem-mum", "aims-jodhpur"],
         fired: false,
       },
       {
         index: 1,
         at: 5,
         targets: ["south"],
-        hits: ["HOSP-002", "HOSP-003", "HOSP-005"],
+        hits: ["apollo-chennai", "kims-blr", "cmc-vellore"],
         fired: false,
       },
       {
         index: 2,
         at: 9,
         targets: ["east", "north"],
-        hits: ["HOSP-011", "HOSP-008"],
+        hits: ["sskm-kolkata", "fortis-noida"],
         fired: false,
       }
     ]

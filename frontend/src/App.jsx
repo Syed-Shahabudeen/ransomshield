@@ -341,6 +341,8 @@ export default function App() {
     setNetwork(initialDemoNetwork);
     setForcedTab(null);
     setFileChanges([]);
+    setConnected(false);
+    setUptimeSeconds(0);
 
     // 2. Try to stop live backend campaign if connected
     try {
@@ -356,6 +358,13 @@ export default function App() {
     // Pure frontend simulation for Phase 8
     setForcedTab("datacorr");
     setDemoState("under_attack");
+    setConnected(true);
+    setUptimeSeconds(0);
+    
+    const clockTimer = setInterval(() => {
+      setUptimeSeconds(prev => prev + 1);
+    }, 1000);
+    demoTimersRef.current.push(clockTimer);
     
     // Inject Mock Network for Map Visualization
     const campaignData = createDemoCampaign();
@@ -403,6 +412,20 @@ export default function App() {
            });
         }, 11000);
         demoTimersRef.current.push(rTimer);
+
+        // Queue final Protected transition (back to green)
+        const pTimer = setTimeout(() => {
+           setNetwork(prev => {
+              if (!prev || !prev.campaign) return prev;
+              const newNodes = (prev.nodes || []).map(n => 
+                (act.hits || []).includes(n.id) ? { ...n, status: "protected" } : n
+              );
+              const counts = { protected: 0, attacked: 0, quarantined: 0, recovered: 0 };
+              newNodes.forEach(n => counts[n.status || "protected"]++);
+              return { ...prev, nodes: newNodes, counts };
+           });
+        }, 18000);
+        demoTimersRef.current.push(pTimer);
 
       }, act.at * 1000);
       demoTimersRef.current.push(actTimer);

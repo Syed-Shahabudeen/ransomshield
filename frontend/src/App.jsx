@@ -20,7 +20,7 @@ export default function App() {
   const [recoveryTimer, setRecoveryTimer] = useState(null);
   const [fileChanges, setFileChanges] = useState([]);
   const [auditStatus, setAuditStatus] = useState(null);
-  const [network, setNetwork] = useState(null);
+  const [network, setNetwork] = useState(initialDemoNetwork);
   const [forcedTab, setForcedTab] = useState(null);
   
   // Phase 8: Pure Frontend Demo State
